@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  color: #0A0A0A;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-ink text-white px-7 py-3.5 font-semibold tracking-wide transition-all duration-200 hover:bg-gold active:scale-95 focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2;
+  }
+
+  .btn-outline {
+    @apply border border-ink text-ink px-7 py-3.5 font-semibold tracking-wide transition-all duration-200 hover:bg-ink hover:text-white active:scale-95 focus:outline-none focus:ring-2 focus:ring-ink focus:ring-offset-2;
+  }
+
+  .section-title {
+    @apply text-2xl md:text-3xl font-bold tracking-tight text-ink;
+  }
+
+  .section-subtitle {
+    @apply text-muted text-base leading-relaxed;
+  }
+
+  .card {
+    @apply bg-white border border-border p-6 transition-shadow duration-200 hover:shadow-md;
+  }
+
+  .field-label {
+    @apply block text-xs font-semibold uppercase tracking-widest text-ink mb-1.5;
+  }
+
+  .field-input {
+    @apply w-full border border-border bg-white px-4 py-3 text-ink text-sm focus:outline-none focus:ring-2 focus:ring-ink focus:border-ink transition-all duration-150 placeholder-muted;
+  }
+
+  .field-error {
+    @apply text-xs text-red-600 mt-1;
+  }
+}
+
+.gold-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #B8965A 0%, #D4AF72 50%, #B8965A 100%);
+}
+
+.hero-bg {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1a1a1a 60%, #262626 100%);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.brands-scroll {
+  display: flex;
+  gap: 2rem;
+  animation: scroll 30s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.brands-scroll:hover {
+  animation-play-state: paused;
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+  pointer-events: none;
+  tabIndex: -1;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
