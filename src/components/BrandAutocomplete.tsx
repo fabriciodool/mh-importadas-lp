@@ -153,7 +153,7 @@ export default function BrandAutocomplete({
                 selectBrand(brand);
               }}
               onMouseEnter={() => setHighlighted(i)}
-              className={`px-4 py-2.5 text-sm cursor-pointer transition-colors duration-100 ${
+              className={`px-4 py-3 md:py-2.5 text-base md:text-sm cursor-pointer transition-colors duration-100 ${
                 i === highlighted ? "bg-ink text-white" : "hover:bg-surface text-ink"
               }`}
             >

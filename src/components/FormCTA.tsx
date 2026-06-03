@@ -11,7 +11,7 @@ export default function FormCTA() {
             Preencha o formulário e siga para o WhatsApp com sua solicitação já estruturada.
           </p>
         </div>
-        <div className="bg-white border border-border p-8 md:p-10 shadow-sm">
+        <div className="bg-white border border-border p-5 md:p-10 shadow-sm">
           <LeadForm />
         </div>
       </div>

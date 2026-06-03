@@ -10,14 +10,14 @@ const BENEFITS = [
 
 export default function Hero() {
   return (
-    <section className="hero-bg min-h-screen pt-16 md:pt-20 relative overflow-hidden">
+    <section className="hero-bg lg:min-h-screen pt-16 md:pt-20 relative overflow-hidden">
       <div className="absolute inset-0 opacity-5 pointer-events-none"
         style={{ backgroundImage: "radial-gradient(circle at 70% 50%, #B8965A 0%, transparent 60%)" }}
       />
 
-      <div className="max-w-6xl mx-auto px-5 md:px-8 py-16 md:py-24">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-          <div className="text-white">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 py-8 md:py-24">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+          <div className="text-white order-2 lg:order-1">
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="w-6 h-px bg-gold" />
               <span className="text-xs font-semibold tracking-[0.25em] uppercase text-gold">
@@ -49,7 +49,7 @@ export default function Hero() {
             </p>
           </div>
 
-          <div id="formulario" className="bg-white p-8 md:p-10 shadow-2xl">
+          <div id="formulario" className="bg-white p-5 md:p-8 lg:p-10 shadow-2xl order-1 lg:order-2">
             <div className="mb-6">
               <h2 className="text-ink text-lg font-bold tracking-tight mb-1">
                 Solicite seu atendimento
