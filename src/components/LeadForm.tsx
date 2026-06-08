@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { BRANDS } from "@/lib/brands";
-import { PRODUCTS } from "@/lib/products";
+import { getProductsForBrand } from "@/lib/brand-products";
 
 interface FormData {
   marca: string;
@@ -197,7 +197,7 @@ export default function LeadForm() {
                 id="marca"
                 name="marca"
                 value={form.marca}
-                onChange={(e) => { setForm((f) => ({ ...f, marca: e.target.value })); setErrors((er) => ({ ...er, marca: undefined })); }}
+                onChange={(e) => { setForm((f) => ({ ...f, marca: e.target.value, produto: "" })); setErrors((er) => ({ ...er, marca: undefined, produto: undefined })); }}
                 aria-invalid={!!errors.marca}
                 className={`field-input appearance-none cursor-pointer pr-10 ${errors.marca ? "border-red-500" : form.marca ? "border-green-600" : ""}`}
               >
@@ -226,12 +226,13 @@ export default function LeadForm() {
                 id="produto"
                 name="produto"
                 value={form.produto}
+                disabled={!form.marca}
                 onChange={(e) => { setForm((f) => ({ ...f, produto: e.target.value })); setErrors((er) => ({ ...er, produto: undefined })); }}
                 aria-invalid={!!errors.produto}
-                className={`field-input appearance-none cursor-pointer pr-10 ${errors.produto ? "border-red-500" : form.produto ? "border-green-600" : ""}`}
+                className={`field-input appearance-none cursor-pointer pr-10 disabled:opacity-50 disabled:cursor-not-allowed ${errors.produto ? "border-red-500" : form.produto ? "border-green-600" : ""}`}
               >
-                <option value="">Selecione o equipamento</option>
-                {PRODUCTS.map((p) => <option key={p} value={p}>{p}</option>)}
+                <option value="">{form.marca ? "Selecione o equipamento" : "Selecione a marca primeiro"}</option>
+                {getProductsForBrand(form.marca).map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted">
                 {form.produto ? (
