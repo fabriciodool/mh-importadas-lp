@@ -53,6 +53,8 @@ export default function LeadForm() {
   const [loading, setLoading] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [started, setStarted] = useState(false);
+  const [cepAddress, setCepAddress] = useState<{ logradouro?: string; bairro?: string; localidade?: string; uf?: string } | null>(null);
+  const [cepFetching, setCepFetching] = useState(false);
   const honeyRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -61,6 +63,19 @@ export default function LeadForm() {
       window.dataLayer?.push({ event: "lead_form_start", lp: "mh-importadas" });
     }
   }, [form, started]);
+
+  useEffect(() => {
+    const digits = form.cep.replace(/\D/g, "");
+    if (digits.length !== 8) { setCepAddress(null); return; }
+    setCepFetching(true);
+    const controller = new AbortController();
+    fetch(`https://viacep.com.br/ws/${digits}/json/`, { signal: controller.signal })
+      .then((r) => r.json())
+      .then((data) => { setCepAddress(data.erro ? null : data); })
+      .catch(() => { setCepAddress(null); })
+      .finally(() => { setCepFetching(false); });
+    return () => controller.abort();
+  }, [form.cep]);
 
   const validateStep1 = (): Errors => {
     const e: Errors = {};
@@ -311,6 +326,23 @@ export default function LeadForm() {
               className={`field-input ${errors.cep ? "border-red-500" : ""}`}
             />
             {errors.cep && <p role="alert" className="field-error">{errors.cep}</p>}
+            {cepFetching && (
+              <p className="text-xs text-muted mt-1 flex items-center gap-1">
+                <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
+                Buscando endereço...
+              </p>
+            )}
+            {!cepFetching && cepAddress && (
+              <p className="text-xs text-green-700 mt-1 flex items-start gap-1">
+                <svg className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                {[cepAddress.logradouro, cepAddress.bairro, `${cepAddress.localidade}/${cepAddress.uf}`].filter(Boolean).join(" · ")}
+              </p>
+            )}
           </div>
 
           {submitError && (

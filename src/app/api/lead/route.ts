@@ -89,6 +89,22 @@ export async function POST(req: NextRequest) {
   const wFormatted = formatPhone(whatsapp);
   const cepFormatted = formatCEP(cep);
 
+  let addressLine = "";
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 4000);
+    const viacepRes = await fetch(`https://viacep.com.br/ws/${cep}/json/`, { signal: controller.signal });
+    clearTimeout(timeout);
+    if (viacepRes.ok) {
+      const addr = await viacepRes.json();
+      if (!addr.erro) {
+        addressLine = [addr.logradouro, addr.bairro, `${addr.localidade}/${addr.uf}`].filter(Boolean).join(", ");
+      }
+    }
+  } catch {
+    // ViaCEP indisponível — continua sem endereço
+  }
+
   try {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
@@ -106,7 +122,7 @@ Marca: ${marca}
 Produto: ${produto}
 Nome: ${nome}
 WhatsApp: ${wFormatted}
-CEP de atendimento: ${cepFormatted}
+CEP de atendimento: ${cepFormatted}${addressLine ? `\nEndereço: ${addressLine}` : ""}
 
 Origem:
 LP: mh-importadas
@@ -130,6 +146,7 @@ Data/hora: ${utms.timestamp}`;
 <tr><td style="padding:6px 12px;background:#F5F4F1;font-weight:600">Nome</td><td style="padding:6px 12px;border-bottom:1px solid #E5E3DF">${nome}</td></tr>
 <tr><td style="padding:6px 12px;background:#F5F4F1;font-weight:600">WhatsApp</td><td style="padding:6px 12px;border-bottom:1px solid #E5E3DF">${wFormatted}</td></tr>
 <tr><td style="padding:6px 12px;background:#F5F4F1;font-weight:600">CEP</td><td style="padding:6px 12px;border-bottom:1px solid #E5E3DF">${cepFormatted}</td></tr>
+${addressLine ? `<tr><td style="padding:6px 12px;background:#F5F4F1;font-weight:600">Endereço</td><td style="padding:6px 12px;border-bottom:1px solid #E5E3DF">${addressLine}</td></tr>` : ""}
 </table>
 <h3 style="font-size:12px;color:#6B6B6B;text-transform:uppercase;letter-spacing:2px">Origem</h3>
 <table style="width:100%;border-collapse:collapse;font-size:12px;color:#6B6B6B">
@@ -153,7 +170,7 @@ ${Object.entries({ LP: "mh-importadas", URL: utms.landing_page, Referrer: utms.r
 
   const waNumber = process.env.WHATSAPP_NUMBER_MH ?? "5511999999999";
   const waMessage = encodeURIComponent(
-    `Olá, vim pela página da M&H e quero solicitar atendimento técnico para eletrodoméstico importado.\n\nMarca: ${marca}\nProduto: ${produto}\nNome: ${nome}\nWhatsApp: ${wFormatted}\nCEP de atendimento: ${cepFormatted}\n\nAguardo retorno para agendar uma avaliação técnica.`
+    `Olá, vim pela página da M&H e quero solicitar atendimento técnico para eletrodoméstico importado.\n\nMarca: ${marca}\nProduto: ${produto}\nNome: ${nome}\nWhatsApp: ${wFormatted}\nCEP de atendimento: ${cepFormatted}${addressLine ? `\nEndereço: ${addressLine}` : ""}\n\nAguardo retorno para agendar uma avaliação técnica.`
   );
 
   return NextResponse.json({
